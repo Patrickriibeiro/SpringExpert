@@ -1,4 +1,4 @@
-package io.github.PatrickRiibeio.SpringExpert.model.Entity;
+package io.github.PatrickRiibeio.SpringExpert.domain.Entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "item_pedido")
-public class ItemPedidoEntity {
+public class ItemPedido {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,11 +23,11 @@ public class ItemPedidoEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "pedido_id")
-	private PedidoEntity pedido;
+	private Pedido pedido;
 
 	@ManyToOne
 	@JoinColumn(name = "produto_id")
-	private ProdutoEntity produto;
+	private Produto produto;
 
 	@Column(name = "quantidade")
 	private Integer quantidade;

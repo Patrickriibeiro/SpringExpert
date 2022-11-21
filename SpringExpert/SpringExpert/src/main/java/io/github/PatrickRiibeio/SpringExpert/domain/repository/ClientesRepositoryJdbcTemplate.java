@@ -1,4 +1,4 @@
-package io.github.PatrickRiibeio.SpringExpert.model.repository;
+package io.github.PatrickRiibeio.SpringExpert.domain.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import io.github.PatrickRiibeio.SpringExpert.model.Entity.ClienteEntity;
+import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Cliente;
 
 @Repository
 public class ClientesRepositoryJdbcTemplate {
@@ -22,17 +22,17 @@ public class ClientesRepositoryJdbcTemplate {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;// Melhor opção para bancos legados ou mal estruturados, pq opera direto nas tabelas gerando mais flexibilidade.
 
-	public ClienteEntity salvar(ClienteEntity cliente) {
+	public Cliente salvar(Cliente cliente) {
 		jdbcTemplate.update(INSERT, new Object[] { cliente.getNome() });
 		return cliente;
 	}
 
-	public ClienteEntity atualizar(ClienteEntity cliente) {
-		jdbcTemplate.update(UPDATE, new Object[] { cliente.getNome()});
+	public Cliente atualizar(Cliente cliente) {
+		jdbcTemplate.update(UPDATE, new Object[] { cliente.getNome() , cliente.getId()});
 		return cliente;
 	};
 	
-	public void deletar(ClienteEntity cliente) {
+	public void deletar(Cliente cliente) {
 	  	deletar(cliente.getId());
 	}
 	
@@ -41,22 +41,22 @@ public class ClientesRepositoryJdbcTemplate {
 	}
 	 
 	@SuppressWarnings("deprecation")
-	public List<ClienteEntity> buscaPorNome(String nome ) {
+	public List<Cliente> buscaPorNome(String nome ) {
 		return jdbcTemplate.query(SELECT_ALL.concat(" where nome like ?"), new Object[]{"%" + nome + "%"},obterClienteMapper());
 	}
 
-	public List<ClienteEntity> listarClientes() {
+	public List<Cliente> listarClientes() {
 		return jdbcTemplate.query(SELECT_ALL, obterClienteMapper());
 	}
 
-	private RowMapper<ClienteEntity> obterClienteMapper() {
-		return new RowMapper<ClienteEntity>() {
+	private RowMapper<Cliente> obterClienteMapper() {
+		return new RowMapper<Cliente>() {
 
 			@Override
-			public ClienteEntity mapRow(ResultSet resultSet, int i) throws SQLException {
+			public Cliente mapRow(ResultSet resultSet, int i) throws SQLException {
 				Integer id = resultSet.getInt("id");
 				String nome = resultSet.getString("nome");
-				return new ClienteEntity(id, nome);
+				return new Cliente(id, nome);
 			}
 		};
 	}

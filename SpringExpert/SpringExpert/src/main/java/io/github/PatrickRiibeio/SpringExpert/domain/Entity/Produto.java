@@ -1,4 +1,4 @@
-package io.github.PatrickRiibeio.SpringExpert.model.Entity;
+package io.github.PatrickRiibeio.SpringExpert.domain.Entity;
 
 import java.math.BigDecimal;
 
@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "produto")
-public class ProdutoEntity {
+public class Produto {
 
 	 @Id
 	 @GeneratedValue(strategy = GenerationType.AUTO)

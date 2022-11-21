@@ -1,4 +1,4 @@
-package io.github.PatrickRiibeio.SpringExpert.model.Entity;
+package io.github.PatrickRiibeio.SpringExpert.domain.Entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,7 +19,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "pedido")
-public class PedidoEntity {
+public class Pedido {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,7 +28,7 @@ public class PedidoEntity {
 	
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
-	private ClienteEntity cliente;
+	private Cliente cliente;
 	
 	@Column(name = "data_pedido")
 	private LocalDate dataPedido;
@@ -36,7 +36,7 @@ public class PedidoEntity {
 	@Column(name = "total", precision = 20, scale = 2)// scale casas decimais.
 	private BigDecimal total;
 	
-	@OneToMany(mappedBy = "pedido_id")
-	private Set<ItemPedidoEntity> itempedidos;
+	@OneToMany(mappedBy = "pedido")
+	private Set<ItemPedido> itens;
 	
 }
