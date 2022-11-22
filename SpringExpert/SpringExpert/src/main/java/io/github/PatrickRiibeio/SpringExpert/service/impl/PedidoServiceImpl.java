@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Cliente;
@@ -11,6 +13,7 @@ import io.github.PatrickRiibeio.SpringExpert.domain.Entity.ItemPedido;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Pedido;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Produto;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ClientesRepositorySpringDataJpa;
+import io.github.PatrickRiibeio.SpringExpert.domain.repository.ItemPedidosRepository;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.PedidosRepository;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ProdutosRepository;
 import io.github.PatrickRiibeio.SpringExpert.exception.RegraDeNegocioException;
@@ -26,8 +29,10 @@ public class PedidoServiceImpl implements PedidoService {
 	private final PedidosRepository repository;
 	private final ClientesRepositorySpringDataJpa clientesRepository;
 	private final ProdutosRepository produtosRepository;
+	private final ItemPedidosRepository itemPedidoRepository;
 
 	@Override
+	@Transactional
 	public Pedido salvar(PedidoDTO dto) {
 		Cliente cliente = clientesRepository.findById(dto.getCliente())
 				.orElseThrow(() -> new RegraDeNegocioException("Código de cliente inválido."));
@@ -36,9 +41,14 @@ public class PedidoServiceImpl implements PedidoService {
 		pedido.setTotal(dto.getTotal());
 		pedido.setDataPedido(LocalDate.now());
 		pedido.setCliente(cliente);
-		
-		converterItems(pedido, dto.getItensPerdido());
 
+		List<ItemPedido> itemPedido = converterItems(pedido, dto.getItensPerdido());
+
+		repository.save(pedido);
+		itemPedidoRepository.saveAll(itemPedido);
+		pedido.setItens(itemPedido);
+
+		return pedido;
 	}
 
 	private List<ItemPedido> converterItems(Pedido pedido, List<ItensPedidoDTO> itensPedido) {
@@ -47,17 +57,16 @@ public class PedidoServiceImpl implements PedidoService {
 		}
 
 		return itensPedido.stream().map(dto -> {
-					
+
 			Produto produto = produtosRepository.findById(dto.getProduto())
-					.orElseThrow(
-							() -> new RegraDeNegocioException("Código de produto inválido"));
- 	
+					.orElseThrow(() -> new RegraDeNegocioException("Código de produto inválido"));
+
 			ItemPedido itemPedido = new ItemPedido();
 			itemPedido.setQuantidade(dto.getQuantidade());
 			itemPedido.setPedido(pedido);
 			itemPedido.setProduto(produto);
-            return itemPedido;
-			
+			return itemPedido;
+
 		}).collect(Collectors.toList());
 
 	}
