@@ -35,13 +35,13 @@ public class ProdutoController {
 
 	@PostMapping
     @ResponseStatus(CREATED)
-    public Produto save( @RequestBody Produto produto ){
+    public Produto save(@RequestBody Produto produto ){
         return prodrep.save(produto);
     }
 
     @PutMapping("{id}")
     @ResponseStatus(NO_CONTENT)
-    public void update( @PathVariable Integer id, @RequestBody Produto produto ){
+    public void update(@PathVariable Integer id, @RequestBody Produto produto ){
         prodrep
                 .findById(id)
                 .map( p -> {
