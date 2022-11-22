@@ -2,6 +2,7 @@ package io.github.PatrickRiibeio.SpringExpert.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -12,6 +13,7 @@ import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Cliente;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.ItemPedido;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Pedido;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Produto;
+import io.github.PatrickRiibeio.SpringExpert.domain.enums.StatusPedido;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ClientesRepositorySpringDataJpa;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ItemPedidosRepository;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.PedidosRepository;
@@ -41,6 +43,7 @@ public class PedidoServiceImpl implements PedidoService {
 		pedido.setTotal(dto.getTotal());
 		pedido.setDataPedido(LocalDate.now());
 		pedido.setCliente(cliente);
+		pedido.setStatus(StatusPedido.REALIZADO);
 
 		List<ItemPedido> itemPedido = converterItems(pedido, dto.getItensPerdido());
 
@@ -50,6 +53,13 @@ public class PedidoServiceImpl implements PedidoService {
 
 		return pedido;
 	}
+	
+	@Override
+	public Optional<Pedido> obterPedidoCompleto(Integer id) {
+		return repository.findByIdFetchItens(id);	
+	}
+	
+	
 
 	private List<ItemPedido> converterItems(Pedido pedido, List<ItensPedidoDTO> itensPedido) {
 		if (itensPedido.isEmpty()) {

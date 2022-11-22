@@ -1,4 +1,4 @@
-package io.github.PatrickRiibeio.SpringExpert.utils;
+package io.github.PatrickRiibeio.SpringExpert.exception;
 
 import java.util.Arrays;
 import java.util.List;
