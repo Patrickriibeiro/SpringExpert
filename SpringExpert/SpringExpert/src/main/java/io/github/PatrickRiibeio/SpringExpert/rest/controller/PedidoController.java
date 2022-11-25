@@ -50,8 +50,10 @@ public class PedidoController {
 	private InformacoesPedidoDTO converter(Pedido pedido) {
 		return InformacoesPedidoDTO.builder().codigo(pedido.getId())
 				.dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-				.cpf(pedido.getCliente().getCpf()).nomeCliente(pedido.getCliente().getNome()).total(pedido.getTotal())
-				.status(pedido.getStatus().name()).itens(converter(pedido.getItens())).build();
+				.cpf(pedido.getCliente().getCpf())
+				.nomeCliente(pedido.getCliente().getNome()).total(pedido.getTotal())
+				.status(pedido.getStatus().name())
+				.itens(converter(pedido.getItens())).build();
 
 	}
 
@@ -60,8 +62,12 @@ public class PedidoController {
 			return Collections.emptyList();
 		}
 		return itens.stream()
-				.map(item -> InformacaoItemPedidoDTO.builder().descricaoProduto(item.getProduto().getDescricao())
-						.precoUnitario(item.getProduto().getPreco()).quantidade(item.getQuantidade()).build())
+				.map(item -> 
+				InformacaoItemPedidoDTO.builder()
+				.descricaoProduto(item.getProduto()
+						.getDescricao())
+						.precoUnitario(item.getProduto()
+								.getPreco()).quantidade(item.getQuantidade()).build())
 				.collect(Collectors.toList());
 	}
 }
