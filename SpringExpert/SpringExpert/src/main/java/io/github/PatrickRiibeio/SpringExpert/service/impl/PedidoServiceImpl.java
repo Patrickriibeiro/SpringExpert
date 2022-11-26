@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Cliente;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.ItemPedido;
@@ -18,6 +17,7 @@ import io.github.PatrickRiibeio.SpringExpert.domain.repository.ClientesRepositor
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ItemPedidosRepository;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.PedidosRepository;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ProdutosRepository;
+import io.github.PatrickRiibeio.SpringExpert.exception.PedidoNaoEncontradoException;
 import io.github.PatrickRiibeio.SpringExpert.exception.RegraDeNegocioException;
 import io.github.PatrickRiibeio.SpringExpert.rest.dto.ItensPedidoDTO;
 import io.github.PatrickRiibeio.SpringExpert.rest.dto.PedidoDTO;
@@ -53,13 +53,22 @@ public class PedidoServiceImpl implements PedidoService {
 
 		return pedido;
 	}
-	
+
 	@Override
 	public Optional<Pedido> obterPedidoCompleto(Integer id) {
-		return repository.findByIdFetchItens(id);	
+		return repository.findByIdFetchItens(id);
 	}
-	
-	
+
+	@Override
+	@Transactional
+	public void atualizarStatusPedido(Integer id, StatusPedido status) {
+		repository.findById(id).map(pedido -> {
+			pedido.setStatus(status);
+			return repository.save(pedido);
+		}).orElseThrow(
+				() -> new PedidoNaoEncontradoException("Pedido não encontrado, não foi possivel atualizar os status"));
+
+	}
 
 	private List<ItemPedido> converterItems(Pedido pedido, List<ItensPedidoDTO> itensPedido) {
 		if (itensPedido.isEmpty()) {
@@ -80,5 +89,4 @@ public class PedidoServiceImpl implements PedidoService {
 		}).collect(Collectors.toList());
 
 	}
-
 }

@@ -23,8 +23,7 @@ public class ApplicationControllerAdvice {
 	 @ExceptionHandler(PedidoNaoEncontradoException.class)
 	 @ResponseStatus(HttpStatus.NOT_FOUND)
 	 public ApiErrors HandlePedidoNaoEncotrado(PedidoNaoEncontradoException ex) {
-    	 String mensagemErro = ex.getMessage();
-    	 return new ApiErrors(mensagemErro);
+    	 return new ApiErrors(ex.getMessage());
      }
 	
 }

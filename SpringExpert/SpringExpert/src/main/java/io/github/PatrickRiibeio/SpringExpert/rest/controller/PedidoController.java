@@ -1,14 +1,16 @@
 package io.github.PatrickRiibeio.SpringExpert.rest.controller;
 
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.ItemPedido;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Pedido;
+import io.github.PatrickRiibeio.SpringExpert.domain.enums.StatusPedido;
 import io.github.PatrickRiibeio.SpringExpert.exception.PedidoNaoEncontradoException;
+import io.github.PatrickRiibeio.SpringExpert.rest.dto.AtualizacaoStatusPedidoDTO;
 import io.github.PatrickRiibeio.SpringExpert.rest.dto.InformacaoItemPedidoDTO;
 import io.github.PatrickRiibeio.SpringExpert.rest.dto.InformacoesPedidoDTO;
 import io.github.PatrickRiibeio.SpringExpert.rest.dto.PedidoDTO;
@@ -46,7 +50,13 @@ public class PedidoController {
 		return service.obterPedidoCompleto(id).map(p -> converter(p))
 				.orElseThrow(() -> new PedidoNaoEncontradoException("Pedido não encontrado."));
 	}
-
+	
+	@PatchMapping("{id}")
+	@ResponseStatus(NO_CONTENT)
+	public void updateStatus(@PathVariable("id") Integer id,@RequestBody AtualizacaoStatusPedidoDTO dto) {
+		service.atualizarStatusPedido(id, StatusPedido.valueOf(dto.getNovoStatus()));
+	}
+	
 	private InformacoesPedidoDTO converter(Pedido pedido) {
 		return InformacoesPedidoDTO.builder().codigo(pedido.getId())
 				.dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
