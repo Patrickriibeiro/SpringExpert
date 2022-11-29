@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -33,10 +35,12 @@ public class Cliente {
 	private Integer id;
 	
 	@Column(name = "nome",length = 100)
+	@NotEmpty(message = "Campo nome é obrigatório.")
 	private String nome;
 	
 	@Column(name = "cpf", length = 11)
-	@CPF(message = "CPF invalido")
+	@NotEmpty(message = "Campo CPF é obrigatório.")
+	@CPF(message = "CPF inválido.")
 	private String cpf;
 	
 	@JsonIgnore

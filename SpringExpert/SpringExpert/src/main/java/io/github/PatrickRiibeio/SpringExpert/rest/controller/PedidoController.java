@@ -1,13 +1,15 @@
 package io.github.PatrickRiibeio.SpringExpert.rest.controller;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
+import javax.validation.Valid;
+
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,7 +42,7 @@ public class PedidoController {
 
 	@PostMapping
 	@ResponseStatus(CREATED)
-	public Integer save(@RequestBody PedidoDTO dto) {
+	public Integer save(@RequestBody @Valid PedidoDTO dto) {
 		Pedido pedido = service.salvar(dto);
 		return pedido.getId();
 	}
@@ -50,20 +52,18 @@ public class PedidoController {
 		return service.obterPedidoCompleto(id).map(p -> converter(p))
 				.orElseThrow(() -> new PedidoNaoEncontradoException("Pedido não encontrado."));
 	}
-	
+
 	@PatchMapping("{id}")
 	@ResponseStatus(NO_CONTENT)
-	public void updateStatus(@PathVariable("id") Integer id,@RequestBody AtualizacaoStatusPedidoDTO dto) {
+	public void updateStatus(@PathVariable("id") Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto) {
 		service.atualizarStatusPedido(id, StatusPedido.valueOf(dto.getNovoStatus()));
 	}
-	
+
 	private InformacoesPedidoDTO converter(Pedido pedido) {
 		return InformacoesPedidoDTO.builder().codigo(pedido.getId())
 				.dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-				.cpf(pedido.getCliente().getCpf())
-				.nomeCliente(pedido.getCliente().getNome()).total(pedido.getTotal())
-				.status(pedido.getStatus().name())
-				.itens(converter(pedido.getItens())).build();
+				.cpf(pedido.getCliente().getCpf()).nomeCliente(pedido.getCliente().getNome()).total(pedido.getTotal())
+				.status(pedido.getStatus().name()).itens(converter(pedido.getItens())).build();
 
 	}
 
@@ -72,12 +72,8 @@ public class PedidoController {
 			return Collections.emptyList();
 		}
 		return itens.stream()
-				.map(item -> 
-				InformacaoItemPedidoDTO.builder()
-				.descricaoProduto(item.getProduto()
-						.getDescricao())
-						.precoUnitario(item.getProduto()
-								.getPreco()).quantidade(item.getQuantidade()).build())
+				.map(item -> InformacaoItemPedidoDTO.builder().descricaoProduto(item.getProduto().getDescricao())
+						.precoUnitario(item.getProduto().getPreco()).quantidade(item.getQuantidade()).build())
 				.collect(Collectors.toList());
 	}
 }

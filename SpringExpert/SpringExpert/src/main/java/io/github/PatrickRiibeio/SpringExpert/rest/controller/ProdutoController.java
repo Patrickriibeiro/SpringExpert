@@ -1,9 +1,12 @@
 package io.github.PatrickRiibeio.SpringExpert.rest.controller;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -21,8 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Produto;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ProdutosRepository;
 
-import static org.springframework.http.HttpStatus.*;
-
 @RestController
 @RequestMapping("/api/produtos")
 public class ProdutoController {
@@ -35,13 +36,13 @@ public class ProdutoController {
 
 	@PostMapping
     @ResponseStatus(CREATED)
-    public Produto save(@RequestBody Produto produto ){
+    public Produto save(@RequestBody @Valid Produto produto ){
         return prodrep.save(produto);
     }
 
     @PutMapping("{id}")
     @ResponseStatus(NO_CONTENT)
-    public void update(@PathVariable Integer id, @RequestBody Produto produto ){
+    public void update(@PathVariable Integer id, @RequestBody @Valid Produto produto ){
         prodrep
                 .findById(id)
                 .map( p -> {
