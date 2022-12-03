@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/api/produtor/**")
 		   .hasRole("ADMIN")		
 		.and()
-		   .formLogin();
+		   .httpBasic();
 	}
 
 }
