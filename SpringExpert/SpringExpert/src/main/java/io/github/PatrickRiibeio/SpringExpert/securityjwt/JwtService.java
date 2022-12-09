@@ -1,4 +1,4 @@
-package io.github.PatrickRiibeio.SpringExpert.service;
+package io.github.PatrickRiibeio.SpringExpert.securityjwt;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
