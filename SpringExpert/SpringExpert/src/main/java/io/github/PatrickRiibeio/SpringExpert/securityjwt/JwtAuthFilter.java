@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		String authorization = httpServletRequest.getHeader("Authorization");
 
 		if (authorization != null && authorization.startsWith("Bearer")) {
-			String token = authorization.split("")[1];
+			String token = authorization.split(" ")[1];//transforma a string em dividir pelo regex.
 			boolean isValid = jwtService.tokenValid(token);
 
 			if (isValid) {

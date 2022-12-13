@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Usuario;
 import io.jsonwebtoken.Claims;
@@ -13,6 +14,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+@Service
 public class JwtService {
 
 	@Value("${security.jwt.expiracao}")
@@ -26,15 +28,15 @@ public class JwtService {
        LocalDateTime dataHoraExpiracao = LocalDateTime.now().plusMinutes(expString); //Somar Hora atual + valor da expiracao
        Date data = Date.from(dataHoraExpiracao.atZone(ZoneId.systemDefault()).toInstant()); 
        
-       HashMap<String,Object> claims = new HashMap<>(); //Informações do token.
-       claims.put("emaildoUsuario", "usuario@gmail.com");
-       claims.put("roles","admin");
+       //HashMap<String,Object> claims = new HashMap<>(); //Informações do token.
+       //claims.put("emaildoUsuario", "usuario@gmail.com");
+       //claims.put("roles","admin");
       
        return Jwts
     		      .builder()
     		      .setSubject(usuario.getLogin())
     		      .setExpiration(data)
-    		      .setClaims(claims)
+    		      //.setClaims(claims)
     		      .signWith(SignatureAlgorithm.HS512, chaveDeAssinatura)
     		      .compact();
 	}
