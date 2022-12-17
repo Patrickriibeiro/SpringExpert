@@ -20,9 +20,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import io.github.PatrickRiibeio.SpringExpert.domain.Entity.Cliente;
 import io.github.PatrickRiibeio.SpringExpert.domain.repository.ClientesRepositorySpringDataJpa;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/api/clientes")
+//@ApiIgnore
+@Api("Api Clientes")
 public class ClienteController {
 
 	private ClientesRepositorySpringDataJpa repository;
@@ -32,13 +39,23 @@ public class ClienteController {
 	}
 
 	@GetMapping("{id}")
-	public Cliente getClienteById(@PathVariable Integer id) {
+	@ApiOperation("Obter detalhes do um cliente")
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "Cliente encontrado"),
+		@ApiResponse(code = 400, message = "Cliente não encotrado para o ID informado.")
+	})
+	public Cliente getClienteById(@PathVariable @ApiParam("Id do Cliente")  Integer id) {
 		return repository.findById(id)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
+	@ApiOperation("Salva um novo cliente")
+	@ApiResponses({
+		@ApiResponse(code = 201, message = "Cliente salvo com sucesso"),
+		@ApiResponse(code = 400, message = "Cliente não encotrado para o ID informado.")
+	})
 	public Cliente save(@RequestBody @Valid Cliente cliente) {
 		return repository.save(cliente);
 	}
